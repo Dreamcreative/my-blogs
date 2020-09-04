@@ -1,3 +1,55 @@
+/** 
+ * ajax
+ */
+function ajax({
+  url,
+  type,
+  data,
+  dataType
+}) {
+  let xhr = null
+  if (window.XMLHttpRequest) {
+    // 如果是现代浏览器
+    xhr = new XMLHttpRequest()
+  } else {
+    // 如果是IE低版本浏览器
+    xhr = new ActiveXObject("Microsoft.XMLHttp")
+  }
+  // 将请求方法转为小写
+  type = tpye.toLowerCase()
+  xhr.onReadyStateChange = function () {
+    // 监听xhr状态变化
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      var res;
+      if (dataType !== undefined && dataType.toLowerCase() === "json") {
+        res = JSON.parse(xhr.responseText)
+      } else {
+        res = xhr.responseText
+      }
+      return res
+    }
+  }
+  // 如果请求方式为get 将 传入的data拼接在 url上
+  if (type === "get" && data !== undefined) {
+    url += "?" + data;
+  }
+  // 打开链接
+  xhr.open(type, url, true);
+  // 如果请求方式为post请求，则修改请求消息头
+  if (type === "post") {
+    //增加：设置请求消息头
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  }
+  //4.发送请求
+  if (type === "post" && data !== undefined) {
+    xhr.send(data);
+  } else {
+    xhr.send(null);
+  }
+}
+/** 
+ * promise
+ */
 const PENDING = "PENGDING";
 const FULFILLED = "FULFILLED ";
 const RESOLVED = "RESOLVED";
@@ -402,7 +454,7 @@ function debounce(fn, delay) {
 function shallowClone(target) {
   let result = {};
   for (let key in target) {
-    if (target.hasOwnPrototyep(key)) {
+    if (target.hasOwnPrototy(key)) {
       result[key] = target[key];
     }
   }
@@ -517,9 +569,14 @@ new -
   4， 返回对象 
   */
 function mynew() {
+  // 声明一个对象
   let obj = {};
+  // 获取构造函数
   let constructor = [].shift.call(arguments);
+  // 改变对象的原型指向
   obj.__proto__ = constructor.prototype;
+  // 改变this
   let result = constructor.apply(obj, arguments);
+  // 返回对象
   return typeof result === "object" ? result : obj;
 }
